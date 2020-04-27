@@ -1,0 +1,26 @@
+{
+  "name": "@chacal/canvas-render-utils",
+  "version": "1.0.0",
+  "main": "built/CanvasRenderUtils.js",
+  "types": "built/CanvasRenderUtils.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublish": "rm built/*; npm run tsc",
+    "tsc": "./node_modules/.bin/tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chacal/canvas-render-utils.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "canvas": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.34",
+    "typescript": "^3.8.3"
+  }
+}
