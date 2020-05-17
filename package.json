@@ -7,7 +7,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepublish": "rm built/*; npm run tsc",
+    "prepublish": "rm -r built/*; npm run tsc; cp -r src/fonts built/",
     "tsc": "./node_modules/.bin/tsc"
   },
   "repository": {

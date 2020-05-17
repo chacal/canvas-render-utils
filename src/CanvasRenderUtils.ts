@@ -1,5 +1,15 @@
-import { CanvasRenderingContext2D, createCanvas } from 'canvas'
+import { CanvasRenderingContext2D, createCanvas, registerFont } from 'canvas'
 import { createWriteStream } from 'fs'
+import { resolve } from 'path'
+
+registerFont(resolve(__dirname, './fonts/Roboto_Condensed/RobotoCondensed-Bold.ttf'), { family: 'RobotoCondensed700' })
+registerFont(resolve(__dirname, './fonts/Roboto_Condensed/RobotoCondensed-Regular.ttf'), { family: 'RobotoCondensed400' })
+registerFont(resolve(__dirname, './fonts/Roboto/Roboto-Bold.ttf'), { family: 'Roboto700' })
+registerFont(resolve(__dirname, './fonts/Roboto/Roboto-Medium.ttf'), { family: 'Roboto500' })
+registerFont(resolve(__dirname, './fonts/Roboto/Roboto-Regular.ttf'), { family: 'Roboto400' })
+registerFont(resolve(__dirname, './fonts/Open_Sans/OpenSans-Regular.ttf'), { family: 'OpenSans400' })
+registerFont(resolve(__dirname, './fonts/Open_Sans/OpenSans-SemiBold.ttf'), { family: 'OpenSans600' })
+registerFont(resolve(__dirname, './fonts/Open_Sans/OpenSans-Bold.ttf'), { family: 'OpenSans700' })
 
 export function getTextCenter(ctx: CanvasRenderingContext2D, text: string) {
   const t = ctx.measureText(text)
@@ -19,6 +29,24 @@ export function getDefaultContext(width: number, height: number) {
   ctx.fillStyle = '#000000'
 
   return ctx
+}
+
+export function getContext(w: number, h: number, rotate: boolean = false) {
+  const ctx = getDefaultContext(w, h)
+  if (rotate) {
+    ctx.translate(0, h)
+    ctx.rotate(-90 * Math.PI / 180)
+  }
+  return ctx
+}
+
+export function renderCenteredText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number) {
+  ctx.fillText(text, x - getTextCenter(ctx, text).x, y)
+}
+
+export function renderRightAdjustedText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number) {
+  const t = ctx.measureText(text)
+  ctx.fillText(text, x - t.width, y)
 }
 
 export function toBinaryImage(data: ImageData) {
