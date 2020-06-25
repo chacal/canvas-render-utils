@@ -74,6 +74,46 @@ export function toBinaryImage(data: ImageData) {
   return binaryImage
 }
 
+export function to8BitGrayScale(data: ImageData) {
+  const grayScaleImage = Buffer.alloc(data.width * data.height)
+
+  for (let i = 0; i < data.height * data.width * 4; i += 4) {
+    grayScaleImage[i / 4] = Math.round((data.data[i] + data.data[i + 1] + data.data[i + 2]) / 3)
+  }
+
+  return grayScaleImage
+}
+
+export function toTwoBitGrayScale(data: ImageData) {
+  const grayScale = to8BitGrayScale(data)
+  const twoBitGrayScale = Buffer.alloc(data.width * data.height * 2 / 8)
+
+  for (let i = 0; i < grayScale.length; i += 4) {
+    let twoBitImageByte = 0
+
+    for (let j = 0; j < 4; j++) {
+      if (grayScale[i + j] > 192) {
+        // Pixel is white
+        twoBitImageByte += 3
+      } else if (grayScale[i + j] > 128) {
+        // Pixel is light gray
+        twoBitImageByte += 2
+      } else if (grayScale[i + j] > 64) {
+        // Pixel is dark gray
+        twoBitImageByte += 1
+      }
+
+      if(j < 3) {
+        twoBitImageByte = twoBitImageByte << 2
+      }
+    }
+
+    twoBitGrayScale[i / 4] = twoBitImageByte
+  }
+
+  return twoBitGrayScale
+}
+
 export function saveToPngFile(data: ImageData, pngFileName: string): Promise<void> {
   const canvas = createCanvas(data.width, data.height)
   const ctx = canvas.getContext('2d')
