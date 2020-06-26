@@ -103,7 +103,7 @@ export function toTwoBitGrayScale(data: ImageData) {
         twoBitImageByte += 1
       }
 
-      if(j < 3) {
+      if (j < 3) {
         twoBitImageByte = twoBitImageByte << 2
       }
     }
@@ -112,6 +112,67 @@ export function toTwoBitGrayScale(data: ImageData) {
   }
 
   return twoBitGrayScale
+}
+
+export function toBWRGrayScale(data: ImageData) {
+  const twoBitGrayscale = toTwoBitGrayScale(data)
+  const bwData = Buffer.alloc(data.width * data.height / 8)
+  const rData = Buffer.alloc(data.width * data.height / 8)
+
+  for (let i = 0; i < twoBitGrayscale.length; i += 2) {
+    let bwByte = 0
+    let rByte = 0
+
+    let twoBitByte1 = twoBitGrayscale[i]
+    let twoBitByte2 = twoBitGrayscale[i + 1]
+
+    for (let j = 0; j < 8; j++) {
+      if (j % 2 === 0) {
+        // We are dealing with even bit -> modify bwByte
+        if ((twoBitByte1 & 0x80) === 0x80) {
+          // Set LSB of bwByte if MSB of twoBitByte1 is 1
+          bwByte += 1
+        }
+        bwByte = bwByte << 1
+      } else {
+        // We are dealing with odd bit -> modify rByte
+        if ((twoBitByte1 & 0x80) === 0x80) {
+          // Set LSB of rByte if MSB of twoBitByte1 is 1
+          rByte += 1
+        }
+        rByte = rByte << 1
+      }
+      twoBitByte1 = twoBitByte1 << 1
+    }
+
+    for (let j = 0; j < 8; j++) {
+      if (j % 2 === 0) {
+        // We are dealing with even bit -> modify bwByte
+        if ((twoBitByte2 & 0x80) === 0x80) {
+          // Set LSB of bwByte if MSB of twoBitByte1 is 1
+          bwByte += 1
+        }
+        if (j < 6) {
+          bwByte = bwByte << 1
+        }
+      } else {
+        // We are dealing with odd bit -> modify rByte
+        if ((twoBitByte2 & 0x80) === 0x80) {
+          // Set LSB of rByte if MSB of twoBitByte1 is 1
+          rByte += 1
+        }
+        if (j < 7) {
+          rByte = rByte << 1
+        }
+      }
+      twoBitByte2 = twoBitByte2 << 1
+    }
+
+    bwData[i / 2] = bwByte
+    rData[i / 2] = rByte
+  }
+
+  return Buffer.concat([bwData, rData])
 }
 
 export function saveToPngFile(data: ImageData, pngFileName: string): Promise<void> {
