@@ -1,6 +1,6 @@
 {
   "name": "@chacal/canvas-render-utils",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "main": "built/CanvasRenderUtils.js",
   "types": "built/CanvasRenderUtils.d.ts",
   "publishConfig": {
